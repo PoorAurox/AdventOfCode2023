@@ -1,4 +1,4 @@
-$text = Get-Content .\day1Input.ps1
+$text = Get-Content .\day1Input.txt
 
 $numbers = "\d", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"
 
