@@ -1,7 +1,7 @@
 $data = Get-Content (Join-Path $PSScriptRoot day3p1input.txt) -Raw
 
-$characters = [regex]::matches($data, "[^\d\.\r\n]")
-$numbers = [regex]::matches($data, "\d+")
+$characters = [regex]::matches($data, "[^\d\.\r\n]", [System.Text.RegularExpressions.RegexOptions]::Multiline)
+$numbers = [regex]::matches($data, "\d+", [System.Text.RegularExpressions.RegexOptions]::Singleline)
 
 $length = (-split $data)[0].length
 $serials = [System.Collections.Generic.HashSet[System.Text.RegularExpressions.Group]]::new()

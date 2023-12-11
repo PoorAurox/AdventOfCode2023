@@ -1,6 +1,6 @@
 $data = Get-Content (Join-Path $PSScriptRoot day3p1input.txt) -Raw
 
-$characters = [regex]::matches($data, "\*")
+$characters = [regex]::matches($data, "\*", [System.Text.RegularExpressions.RegexOptions]::Singleline)
 $numbers = [regex]::matches($data, "\d+")
 
 $length = (-split $data)[0].length
