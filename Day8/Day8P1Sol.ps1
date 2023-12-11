@@ -1,13 +1,36 @@
+class Node {
+    [string] $Name
+    [string] $Left
+    [string] $Right
+
+
+    [int] GetHashCode() {
+        return $this.ToString().GetHashCode()
+    }
+
+    [string] ToString() {
+        return ($this.Name + $this.Left + $this.Right)
+    }
+}
+class Step {
+    [Node] $Node
+    [string] $Action
+    [int] GetHashCode() {
+        return $this.ToString().GetHashCode()
+    }
+    [string] ToString() {
+        return ($this.Node.ToString() + $this.Action)
+    }
+}
 
 $data = Get-Content (Join-Path $PSScriptRoot Day8Input.txt)
 
 $directions = $data[0]
-
-$mapBetter = @{}
+$mapBetter = [System.Collections.Concurrent.ConcurrentDictionary[string,Node]]::new()
 
 $current = $data | Select-Object -Skip 2 | Foreach-Object {
     $line = [regex]::Match($_, "(?<node>\w+) = \((?<left>\w+), (?<right>\w+)\)")
-    $temp = [pscustomobject]@{
+    $temp = [Node]@{
         Name = $line.Groups["node"].Value
         Left = $line.Groups["left"].Value
         Right = $line.Groups["right"].Value
@@ -19,25 +42,31 @@ $current = $data | Select-Object -Skip 2 | Foreach-Object {
     }
 }
 
-$count = 0
-
-while(($current.Name -like '??Z').Count -ne $current.Count)
-{
-    $action = $count % $directions.length
-    for($i = 0; $i -lt $current.Count; $i++)
+$loops = $current | Foreach-Object {
+    $moves = [System.Collections.Generic.HashSet[Step]]::new()
+    $count = 0
+    $node = $_
+    do
     {
+        
+        $action = $count % $directions.Length
 
         if($directions[$action] -eq 'L')
         {
-            $current[$i] = $mapBetter[$current[$i].Left]
+            $node = $mapBetter[$node.Left]
         }
         else
         {
-            $current[$i] = $mapBetter[$current[$i].Right]
+            $node = $mapBetter[$node.Right]
         }
         
-    }
-    $count ++
+        $count ++
+        $temp = [Step]@{
+            Node = $node
+            Action = $action
+        }
+    } while($moves.Add($temp))
+    Write-Output -NoEnumerate $moves
 }
 
 Write-Host $count
